@@ -279,7 +279,7 @@ public class Search {
 
 	
 	
-	public TreeNode AStarSearchGhost(int forwardCost, int rotateCost, int reverseCost){
+	public TreeNode AStarSearchGhost(int forwardCost, int rotateCost){
 		//nodes yet to be evaluated... sorted by FCost (green nodes)
 		ArrayList<TreeNode> open = new ArrayList<TreeNode>();
 		//nodes already evaluated (red nodes)  
@@ -330,7 +330,7 @@ public class Search {
 						//set the fcost of neighbor
 						int lastMove = FindOrientation(current, current.getParent());
 						int thisMove = FindOrientation(n, current);
-						int turnCost = CalculateTurnCost(thisMove, lastMove, forwardCost, reverseCost, rotateCost);
+						int turnCost = CalculateTurnCost(thisMove, lastMove, forwardCost, rotateCost);
 						
 						n.setgCost(current.getgCost()+turnCost);
 						n.sethCost(CalculateDistance(n, ms.getGoalNode(), false));
@@ -344,7 +344,7 @@ public class Search {
 						
 					}
 					//or the new path to neighbor is shorter
-					else if( n.getgCost() > (current.getgCost()+CalculateTurnCost(FindOrientation(n, current), FindOrientation(current, current.getParent()), forwardCost, reverseCost, rotateCost)) ){
+					else if( n.getgCost() > (current.getgCost()+CalculateTurnCost(FindOrientation(n, current), FindOrientation(current, current.getParent()), forwardCost, rotateCost)) ){
 						//remove the neighbor from open set in order to change its fcost and reinsert 
 						//it in sorted order
 						open.remove(n);
@@ -364,13 +364,13 @@ public class Search {
 	}
 	
 	
-	private int CalculateTurnCost(int thisMove, int lastMove, int forwardCost, int reverseCost, int turnCost) {
+	private int CalculateTurnCost(int thisMove, int lastMove, int forwardCost, int turnCost) {
 		// TODO Auto-generated method stub
 		//1 is upward, 2 is downward, 3 is rightward, 4 is leftward
 		
 		// reversal
 		if( ((thisMove + lastMove) == 3) || ((thisMove + lastMove) == 7)){
-			return reverseCost;
+			return 2*turnCost+forwardCost;
 		}
 		// same direction (ie: forward)
 		else if( thisMove == lastMove){
@@ -378,7 +378,7 @@ public class Search {
 		}
 		//turn
 		else{
-			return turnCost;
+			return turnCost+forwardCost;
 		}
 	}
 
@@ -452,12 +452,13 @@ public class Search {
 	 * First node printed is the starting loc, last node printed is the goal
 	 * @param path
 	 */
-	private static void printPath(ArrayList<TreeNode> path) {
+	private static void PrintPath(ArrayList<TreeNode> path) {
 		for ( int i = 0 ; i <path.size() ; i++){
 			System.out.println( path.get( i ).toString() ) ;
 			//System.out.println(path.get(i).getfCost());
 		}
 	}
+	
 	
 	/**
 	 * Main
@@ -467,7 +468,7 @@ public class Search {
 		List<String> filenames = Arrays.asList("bigMaze.txt", "mediumMaze.txt", "openMaze.txt", "tricky1.txt", "mediumGhost.txt");
 		
 		System.out.println("Creating maze state");
-		MazeState mazeState = new MazeState(filenames.get(0));
+		MazeState mazeState = new MazeState(filenames.get(2));
 		
 		Search s = new Search(mazeState);
 		
@@ -479,7 +480,7 @@ public class Search {
 		//TreeNode result = s.BreadthFirstSearch();
 		//TreeNode result = s.DepthFirstSearch();
 		//TreeNode result = s.AStarSearch();
-		TreeNode result = s.AStarSearchGhost(1,0,0);
+		TreeNode result = s.AStarSearchGhost(2,1);
 		//TreeNode result = s.GreedySearch();
 		
 		
@@ -495,9 +496,10 @@ public class Search {
 			}
 			path.add(0, result);
 			//System.out.println("\t Search Result: Printing Path");
-			//printPath(path);
+			//PrintPath(path);
 			System.out.println("\t Search Result: Number of Expanded Nodes = " + s.numExpandedNodes);
 			System.out.println("\t Search Result: Number of Final Path Nodes = " + path.size());
+			System.out.println("\t Search Result: Final Path Cost = " + path.get(path.size()-1).getgCost());
 			System.out.println("\t Search Result: Drawing Path");
 			if(mazeState.isGhostExists()){
 				s.dB.drawPathWithGhost(path, 100);
