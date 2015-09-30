@@ -70,7 +70,7 @@ public class MazeState {
 							this.ghostPath = new ArrayList<TreeNode>();
 							this.ghostExists = true;
 						}
-						this.state[row][col] = new TreeNode(row, col, false, false, false, true, false, false, true);
+						this.state[row][col] = new TreeNode(row, col, false, false, false, false, false, false, true);
 						this.ghostPath.add(state[row][col]);
 					}
 					else if(arrayVal == 5){
@@ -79,7 +79,7 @@ public class MazeState {
 							this.ghostPath = new ArrayList<TreeNode>();
 							this.ghostExists = true;
 						}
-						this.state[row][col] = new TreeNode(row, col, false, false, false, true, false, true, true);
+						this.state[row][col] = new TreeNode(row, col, false, false, false, false, false, true, true);
 						this.ghostPath.add(state[row][col]);
 						this.ghostStartNode = state[row][col];
 						this.ghostNode = state[row][col];

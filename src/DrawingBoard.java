@@ -79,14 +79,36 @@ public class DrawingBoard {
 		}
 	}
 	public void drawPathWithGhost(ArrayList<TreeNode> path, int pauseDuration){
+		StdDraw.clear();
+		this.drawMazeInitialState();
 		TreeNode ghost = this.ms.ghostStartNode;
+		this.drawVisit(ghost.getRow(), ghost.getCol(), 0, StdDraw.CYAN);
+		this.drawVisit(this.ms.getRootNode().getRow(), this.ms.getRootNode().getCol(), 1000, StdDraw.GREEN);
+		boolean bUseMagenta;
 		TreeNode oldGhost = ghost;
+		int stepCount = 0;
 		for ( int i = 0 ; i <path.size() ; i++){
-			ghost = this.ms.DetermineGhostNode(i);
-			this.drawVisit(oldGhost.getRow(), oldGhost.getCol(), 200, StdDraw.WHITE);
-			this.drawVisit(ghost.getRow(), ghost.getCol(), 200, StdDraw.CYAN);
-			oldGhost = ghost;
-			this.drawVisit( path.get(i).getRow(), path.get(i).getCol(), pauseDuration, StdDraw.BLUE );
+			int idleSteps = 0;
+			if(i==0)
+				idleSteps = (int) path.get(i).getgCost();
+			else
+				idleSteps = (int) (path.get(i).getgCost() - path.get(i-1).getgCost());
+			
+			bUseMagenta = false;
+			while(idleSteps !=0){
+				ghost = this.ms.DetermineGhostNode(stepCount+1);
+				this.drawVisit(oldGhost.getRow(), oldGhost.getCol(), 0, StdDraw.WHITE);
+				this.drawVisit(ghost.getRow(), ghost.getCol(), 0, StdDraw.CYAN);
+				if(bUseMagenta)
+					this.drawVisit( path.get(i).getRow(), path.get(i).getCol(), pauseDuration, StdDraw.MAGENTA );
+				else
+					this.drawVisit( path.get(i).getRow(), path.get(i).getCol(), pauseDuration, StdDraw.BLUE );
+				bUseMagenta = true;
+				//System.out.println("Ghost, " + ghost.toString() + " step:" + stepCount + " node " +i);
+				oldGhost = ghost;
+				stepCount++;
+				idleSteps--;
+			}
 		}
 	}
 	
